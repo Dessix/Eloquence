@@ -17,3 +17,4 @@
 *.vcxproj.user
 ipch/*
 third_party/*
+*.sdf
