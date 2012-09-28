@@ -13,8 +13,22 @@
 *.a
 
 
-*.log
-*.vcxproj.user
+Debug/*.exe
+Debug/*.ilk
+Debug/*.pdb
+Eloquence/Debug/*
 ipch/*
 third_party/*
+*.log
+*.tlog
+*.vcxproj.user
+*.lastbuildstate
+*.rc
+*.manifest
+*.cache
+*.pdb
+*.idb
+*.res
+*.opensdf
 *.sdf
+*.suo
