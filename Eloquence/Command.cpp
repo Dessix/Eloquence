@@ -7,6 +7,7 @@ extern "C" {
 }
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
+#include <luabind/adopt_policy.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -98,11 +99,11 @@ void CommandInterface::InitializeScripting()
 		luabind::class_<CommandInterface>("CommandInterface")
 			.def("getNet", &CommandInterface::getNetworking),
 		luabind::class_<NetworkInterface>("NetworkInterface")
-			.def("connect", &NetworkInterface::CreateSocket),
+			.def("connect", &NetworkInterface::CreateSocket, luabind::adopt(luabind::result)),
 		luabind::class_<NetworkInterface::SockHolder>("Socket")
-			.def("disconnect", &NetworkInterface::SockHolder::Disconnect)
 			.def("read", &NetworkInterface::SockHolder::Read)
 			.def("write", &NetworkInterface::SockHolder::Write)
+			.def("disconnect", &NetworkInterface::SockHolder::Disconnect)
 	];
 	BIND("print", Print);
 	BIND("println", PrintLn);

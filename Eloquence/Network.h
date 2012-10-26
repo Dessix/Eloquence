@@ -131,6 +131,13 @@ public:
 	public:
 		SockHolder(NetworkInterface& net, SOCKET sock) : net(net), sock(sock), closed(false)
 		{}
+		~SockHolder()
+		{
+			if(!closed)
+			{
+				Disconnect();
+			}
+		}
 		std::string Read()
 		{
 			if(closed)
