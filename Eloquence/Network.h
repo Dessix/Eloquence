@@ -38,12 +38,16 @@ public:
 		} else {
 			WSADATA wsadat;
 			int res = WSAStartup(MAKEWORD(2,2), &wsadat);
-			++winsockRefCount;
-			return (res == 0);
+			if(res == 0)
+			{
+				++winsockRefCount;
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
-	struct hostent *host;
 	SOCKET Connect(const std::string& IP, uint32_t port)
 	{
 		assert(winsockRefCount>0);
@@ -54,6 +58,7 @@ public:
 			throw std::exception("InvalidSocketException");
 		}
 
+		struct hostent *host;
 		if((host=gethostbyname(IP.c_str()))==NULL)
 		{
 			throw std::exception("CouldNotResolveHostname");
@@ -115,10 +120,10 @@ public:
 		std::for_each(connections.begin(), connections.end(), [this](SOCKET sock){
 			this->Disconnect(sock);
 		});
-		if(winsockRefCount > 1)
+
+		--winsockRefCount;
+		if(winsockRefCount == 0)
 		{
-			--winsockRefCount;
-		} else {
 			WSACleanup();
 		}
 	}
