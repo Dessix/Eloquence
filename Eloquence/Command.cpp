@@ -1,5 +1,5 @@
-#include "Command.h"
-#include "Bot.h"
+#include "Command.hpp"
+#include "Bot.hpp"
 extern "C" {
 #include <lua.h>
 #include <lualib.h>

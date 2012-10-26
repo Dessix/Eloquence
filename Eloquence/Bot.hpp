@@ -1,10 +1,10 @@
 #pragma once
 #include <stdio.h>
-#include "Network.h"
-#include "System.h"
-#include "Dynamics.h"
-#include "Storage.h"
-#include "Command.h"
+#include "Network.hpp"
+#include "System.hpp"
+#include "Dynamics.hpp"
+#include "Storage.hpp"
+#include "Command.hpp"
 
 //Bot.h
 class Bot

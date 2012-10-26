@@ -93,13 +93,12 @@
     <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bot.h" />
-    <ClInclude Include="Command.h" />
-    <ClInclude Include="Dynamics.h" />
-    <ClInclude Include="Network.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Storage.h" />
-    <ClInclude Include="System.h" />
+    <ClInclude Include="Bot.hpp" />
+    <ClInclude Include="Command.hpp" />
+    <ClInclude Include="Dynamics.hpp" />
+    <ClInclude Include="Network.hpp" />
+    <ClInclude Include="Storage.hpp" />
+    <ClInclude Include="System.hpp" />
     <ClInclude Include="tableliblua.h" />
   </ItemGroup>
   <ItemGroup>

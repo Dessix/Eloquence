@@ -1,5 +1,5 @@
-#include "Bot.h"
-#include "Command.h"
+#include "Bot.hpp"
+#include "Command.hpp"
 
 #pragma warning ( push )
 #pragma warning ( disable : 4355 )

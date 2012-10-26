@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-#include "Bot.h"
+#include "Bot.hpp"
 
 int main()
 {
