@@ -86,12 +86,23 @@ void CommandInterface::InitializeScripting()
 	////////////
 	//BINDINGS//
 	////////////
-#define BIND(name, funcname) lua_register(lua, name, funcname)
+#define BIND(name, func) lua_register(lua, name, func)
 #define RUN(str) luaL_dostring(lua, str)
 	luabind::module(lua, "file")
 	[
 		luabind::def("write", writeFile),
 		luabind::def("read", readFile)
+	];
+	luabind::module(lua)
+		[
+		luabind::class_<CommandInterface>("CommandInterface")
+			.def("getNet", &CommandInterface::getNetworking),
+		luabind::class_<NetworkInterface>("NetworkInterface")
+			.def("connect", &NetworkInterface::CreateSocket),
+		luabind::class_<NetworkInterface::SockHolder>("Socket")
+			.def("disconnect", &NetworkInterface::SockHolder::Disconnect)
+			.def("read", &NetworkInterface::SockHolder::Read)
+			.def("write", &NetworkInterface::SockHolder::Write)
 	];
 	BIND("print", Print);
 	BIND("println", PrintLn);
@@ -106,6 +117,8 @@ void CommandInterface::InitializeScripting()
 	RUN(JSONLIBLUA);
 #undef RUN
 #undef BIND
+	luabind::globals(lua)["cmd"]=this;
+	luabind::globals(lua)["net"]=bot.getNet();
 }
 
 void CommandInterface::CloseScripting()
@@ -147,11 +160,21 @@ CommandInterface::Response CommandInterface::IssueCommand( const std::string& cm
 			}
 			cmdFunc = luabind::call_function<luabind::object>(lua, "load", newcmd);
 		}
-		callFunc(cmdFunc);
+		if(luabind::type(cmdFunc) == LUA_TFUNCTION)
+		{
+			callFunc(cmdFunc);
+		} else if(luabind::type(cmdFunc) != LUA_TNIL) {
+			std::cout << std::string(luabind::call_function<std::string>(cmdFunc.interpreter(), "tostring", cmdFunc)).c_str() << std::endl;
+		}
 	}
 	catch (luabind::error&)
 	{
 		handleError();
 	}
 	return luabind::type(luabind::globals(lua)["___EXIT"]) != LUA_TNIL ? Response::EXIT : Response::CONTINUE;
+}
+
+NetworkInterface* CommandInterface::getNetworking()
+{
+	return bot.getNet();
 }

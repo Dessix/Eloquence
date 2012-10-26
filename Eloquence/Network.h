@@ -8,39 +8,55 @@
 #include <algorithm>
 #pragma comment (lib, "ws2_32.lib")
 
+
 class Bot;
 class NetworkInterface
 {
 	Bot& bot;
-	bool initialized;
 	std::set<SOCKET> connections;
+	static int winsockRefCount;
 public:
-	NetworkInterface(Bot& bot) : bot(bot), initialized(false)
+	NetworkInterface(Bot& bot) : bot(bot)
 	{
+		if(!Initialize())
+		{
+			throw std::exception("Winsock failed to initialize.");
+		}
+	}
+	~NetworkInterface()
+	{
+		Cleanup();
 	}
 
 	bool Initialize()
 	{
-		assert(!initialized);
-		WSADATA wsadat;
-		int res = WSAStartup(MAKEWORD(2,2), &wsadat);
-		return (res == 0);
+		assert(winsockRefCount>=0);
+		if(winsockRefCount > 0)
+		{
+			++winsockRefCount;
+			return true;
+		} else {
+			WSADATA wsadat;
+			int res = WSAStartup(MAKEWORD(2,2), &wsadat);
+			++winsockRefCount;
+			return (res == 0);
+		}
 	}
 
 	struct hostent *host;
-	SOCKET Connect(std::string IP, uint32_t port)
+	SOCKET Connect(const std::string& IP, uint32_t port)
 	{
-		assert(initialized);
+		assert(winsockRefCount>0);
 
 		SOCKET sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
 		if(sock==INVALID_SOCKET)
 		{
-			return 0;
+			throw std::exception("InvalidSocketException");
 		}
 
 		if((host=gethostbyname(IP.c_str()))==NULL)
 		{
-			return 0;
+			throw std::exception("CouldNotResolveHostname");
 		}
 
 		SOCKADDR_IN SockAddr;
@@ -50,7 +66,7 @@ public:
 
 		if(connect(sock,(SOCKADDR*)(&SockAddr),sizeof(SockAddr))!=0)
 		{
-			return 0;
+			throw std::exception("InspecificSocketException");
 		}
 
 		u_long iMode = 1;
@@ -59,7 +75,7 @@ public:
 	}
 	void Disconnect(SOCKET sock)
 	{
-		assert(initialized);
+		assert(winsockRefCount>0);
 		shutdown(sock, SD_BOTH);
 		connections.erase(sock);
 		closesocket(sock);
@@ -78,26 +94,73 @@ public:
 			{
 				throw std::exception("InspecificSocketException");
 			}
-			if(inDataLength == 0)
+			if(inDataLength <= 0)
 			{
 				break;
 			}
-			data += std::string(buffer, inDataLength);
+			data += std::string(reinterpret_cast<const char*>(buffer), reinterpret_cast<const char*>(buffer)+inDataLength);
 		}
 
 		return data;
 	}
 
-	void Write(SOCKET sock, std::string data)
+	void Write(SOCKET sock, const std::string& data)
 	{
+		send(sock, data.c_str(), data.length(), 0);
 	}
 
 	void Cleanup()
 	{
-		assert(initialized);
+		assert(winsockRefCount > 0);
 		std::for_each(connections.begin(), connections.end(), [this](SOCKET sock){
 			this->Disconnect(sock);
 		});
-		WSACleanup();
+		if(winsockRefCount > 1)
+		{
+			--winsockRefCount;
+		} else {
+			WSACleanup();
+		}
+	}
+
+	class SockHolder
+	{
+		NetworkInterface& net;
+		bool closed;
+		SOCKET sock;
+	public:
+		SockHolder(NetworkInterface& net, SOCKET sock) : net(net), sock(sock), closed(false)
+		{}
+		std::string Read()
+		{
+			if(closed)
+			{
+				throw std::exception("SocketClosed");
+			}
+			return net.Read(sock);
+		}
+		void Write(const std::string& data)
+		{
+			if(closed)
+			{
+				throw std::exception("SocketClosed");
+			}
+			net.Write(sock, data);
+		}
+		void Disconnect()
+		{
+			if(closed)
+			{
+				throw std::exception("SocketClosed");
+			}
+			closed = true;
+			net.Disconnect(sock);
+		}
+	};
+
+	SockHolder* CreateSocket(const std::string& IP, int Port)
+	{
+		SOCKET sock = Connect(IP, Port);
+		return new SockHolder(*this, sock);
 	}
 };
