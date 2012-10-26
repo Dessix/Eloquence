@@ -172,6 +172,7 @@ CommandInterface::Response CommandInterface::IssueCommand( const std::string& cm
 	{
 		handleError();
 	}
+	lua_gc(lua,LUA_GCCOLLECT,0);
 	return luabind::type(luabind::globals(lua)["___EXIT"]) != LUA_TNIL ? Response::EXIT : Response::CONTINUE;
 }
 
