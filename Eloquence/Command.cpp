@@ -13,9 +13,6 @@ extern "C" {
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-#include "jsonliblua.h"
-#include "tableliblua.h"
-
 void PrintToLog(const luabind::object& arg)
 {
 	std::cout << luabind::tostring_operator(arg).c_str();
