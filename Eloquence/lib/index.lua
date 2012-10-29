@@ -5,5 +5,5 @@ libs = {
 	"conf"
 }
 for _,libname in ipairs(libs) do
-	print(runfile("lib/"..libname..".lua")
+	print(runfile("lib/"..libname..".lua"))
 end
