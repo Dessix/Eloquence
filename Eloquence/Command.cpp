@@ -109,13 +109,8 @@ void CommandInterface::InitializeScripting()
 	BIND("println", PrintLn);
 	BIND("log", PrintLn);
 	RUN("exit = function() ___EXIT = 1 end");
-	RUN("function serialize(dat) return table.val_to_str(dat) end");
-	RUN("function unserialize(dat) return load(\"return (\"..dat..\")\")() end");
-	RUN("conf={save,load}");
-	RUN("conf.save=function(dat) return file.write(\"conf\", serialize(dat)) end");
-	RUN("conf.load=function() return unserialize(file.read(\"conf\")) end");
-	RUN(TABLELIBLUA);
-	RUN(JSONLIBLUA);
+	RUN("function runfile(filename) contents = file.read(filename) if not(contents) then return end f, err = load(contents) if not (f) then return false, err end return true, f() end");
+	RUN("runfile('lib/index.lua')");
 #undef RUN
 #undef BIND
 	luabind::globals(lua)["cmd"]=this;
