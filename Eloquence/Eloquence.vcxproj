@@ -99,13 +99,6 @@
     <ClInclude Include="Network.hpp" />
     <ClInclude Include="Storage.hpp" />
     <ClInclude Include="System.hpp" />
-    <ClInclude Include="tableliblua.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="jsonliblua.h">
-      <DeploymentContent>true</DeploymentContent>
-      <FileType>Text</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
