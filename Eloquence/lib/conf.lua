@@ -1,4 +1,3 @@
-
 conf={save,load}
-conf.save=function(dat) return file.write("conf", serialize(dat)) end
-conf.load=function() return unserialize(file.read("conf")) end
+conf.save=function(dat) return file.write("conf", json.enc(dat)) end
+conf.load=function() return json.dec(file.read("conf")) end
