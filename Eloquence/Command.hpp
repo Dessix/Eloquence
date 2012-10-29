@@ -5,6 +5,7 @@
 class Bot;
 class ScriptEnv;
 class NetworkInterface;
+class SystemInterface;
 struct lua_State;
 class CommandInterface
 {
@@ -22,4 +23,5 @@ public:
 	~CommandInterface();
 	Response IssueCommand(const std::string& cmd);
 	NetworkInterface* getNetworking();
+	SystemInterface* getSystem();
 };

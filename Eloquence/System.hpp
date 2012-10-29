@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class Bot;
 class SystemInterface
@@ -7,4 +8,5 @@ class SystemInterface
 public:
 	SystemInterface(Bot& bot) : bot(bot)
 	{}
+	std::string exec(char* cmd);
 };

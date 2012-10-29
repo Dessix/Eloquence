@@ -94,13 +94,16 @@ void CommandInterface::InitializeScripting()
 	luabind::module(lua)
 		[
 		luabind::class_<CommandInterface>("CommandInterface")
-			.def("getNet", &CommandInterface::getNetworking),
+			.def("getNet", &CommandInterface::getNetworking)
+			.def("getSystem", &CommandInterface::getSystem),
 		luabind::class_<NetworkInterface>("NetworkInterface")
 			.def("connect", &NetworkInterface::CreateSocket, luabind::adopt(luabind::result)),
 		luabind::class_<NetworkInterface::SockHolder>("Socket")
 			.def("read", &NetworkInterface::SockHolder::Read)
 			.def("write", &NetworkInterface::SockHolder::Write)
-			.def("disconnect", &NetworkInterface::SockHolder::Disconnect)
+			.def("disconnect", &NetworkInterface::SockHolder::Disconnect),
+		luabind::class_<SystemInterface>("SystemInterface")
+			.def("exec", &SystemInterface::exec)
 	];
 	BIND("print", Print);
 	BIND("println", PrintLn);
@@ -171,4 +174,9 @@ CommandInterface::Response CommandInterface::IssueCommand( const std::string& cm
 NetworkInterface* CommandInterface::getNetworking()
 {
 	return bot.getNet();
+}
+
+SystemInterface* CommandInterface::getSystem()
+{
+	return bot.getSys();
 }
