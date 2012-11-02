@@ -1,14 +1,6 @@
-function linearize(data)
-	return data:gsub('\\', "\\\\"):gsub('\n', "\\n")
-end
-
-function unlinearize(data)
-	return data:gsub("\\n", '\n'):gsub("\\\\", '\\')
-end
-
-LineReader = function(Sock)
+LineReader = function(sock)
 	return {
-		sock = Sock,
+		sock = sock,
 		currentData = "",
 		receiveLine = function(self)--Returns StreamState (Boolean), and Line (String/Nil)
 			local function scanForNewline(currentData)
