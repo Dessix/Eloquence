@@ -23,17 +23,14 @@ int Print(lua_State* L)
 	int argc = lua_gettop(L);
 	for(int i = 0; i < argc; ++i)
 	{
-		std::cout << std::string(luabind::call_function<std::string>(L, "tostring", luabind::object(luabind::from_stack(L, i+1))));
+		std::string output = std::string(luabind::call_function<std::string>(L, "tostring", luabind::object(luabind::from_stack(L, i+1))));
+		std::cout.write(output.c_str(), output.length());
 	}
 	return 0;
 }
 int PrintLn(lua_State* L)
 {
-	int argc = lua_gettop(L);
-	for(int i = 0; i < argc; ++i)
-	{
-		std::cout << std::string(luabind::call_function<std::string>(L, "tostring", luabind::object(luabind::from_stack(L, i+1))));
-	}
+	Print(L);
 	std::cout << std::endl;
 	return 0;
 }
@@ -105,12 +102,12 @@ void CommandInterface::InitializeScripting()
 		luabind::class_<SystemInterface>("SystemInterface")
 			.def("exec", &SystemInterface::exec)
 	];
-	BIND("print", Print);
-	BIND("println", PrintLn);
+	BIND("printraw", Print);
+	BIND("print", PrintLn);
 	BIND("log", PrintLn);
 	RUN("exit = function() ___EXIT = 1 end");
-	RUN("function runfile(filename) contents = file.read(filename) if not(contents) then return end f, err = load(contents) if not (f) then return false, err end return true, f() end");
-	RUN("runfile('lib/index.lua')");
+	RUN("require('cmdline')");
+	RUN("require('index')");
 #undef RUN
 #undef BIND
 	luabind::globals(lua)["cmd"]=this;
@@ -121,7 +118,6 @@ void CommandInterface::CloseScripting()
 {
 	lua_close(lua);
 }
-
 CommandInterface::Response CommandInterface::IssueCommand( const std::string& cmd )
 {
 	lua_State* lua = this->lua;
@@ -129,38 +125,27 @@ CommandInterface::Response CommandInterface::IssueCommand( const std::string& cm
 		std::string err(luabind::tostring_operator(luabind::object(luabind::from_stack(lua,-1))));
 		std::cout << ((err.length() > 0) ? err.c_str() : "Unspecified Error") << std::endl;
 	};
-	const auto callFunc = [&handleError](luabind::object& cmdFunc){
+	const auto callFunc = [&handleError](luabind::object& func)->luabind::object{
 		try
 		{
-			luabind::object retval = luabind::call_function<luabind::object>(cmdFunc);
-			if(luabind::type(retval) != LUA_TNIL)
-			{
-				std::cout<< std::string(luabind::call_function<std::string>(cmdFunc.interpreter(), "tostring", retval)).c_str() << std::endl;
-			}
+			return luabind::call_function<luabind::object>(func);
 		}
 		catch (luabind::error&)
 		{
-			handleError();
+			throw;
 		}
 	};
 	const std::string trimmedCmd = boost::algorithm::trim_copy(cmd);
-	luabind::object cmdFunc = luabind::globals(lua)[trimmedCmd.c_str()];
 	try
 	{
-		if(luabind::type(cmdFunc) == LUA_TNIL)
+		luabind::object repl = luabind::globals(lua)["_repl"];
+		if(luabind::type(repl) != LUA_TTABLE)
 		{
-			std::string newcmd(trimmedCmd);
-			if(cmd[0] == '=')
-			{
-				newcmd = std::string("return (") + trimmedCmd.substr(1, trimmedCmd.length() - 1) + ")";
-			}
-			cmdFunc = luabind::call_function<luabind::object>(lua, "load", newcmd);
-		}
-		if(luabind::type(cmdFunc) == LUA_TFUNCTION)
-		{
-			callFunc(cmdFunc);
-		} else if(luabind::type(cmdFunc) != LUA_TNIL) {
-			std::cout << std::string(luabind::call_function<std::string>(cmdFunc.interpreter(), "tostring", cmdFunc)).c_str() << std::endl;
+			printf("REPL NOT FOUND; NAIVE OVERRIDE:\n");
+			callFunc((luabind::object)luabind::call_function<luabind::object>(lua, "load", trimmedCmd));
+		} else {
+			luabind::object handleline = repl["handleline"];
+			luabind::call_function<luabind::object>(handleline, repl, trimmedCmd);
 		}
 	}
 	catch (luabind::error&)

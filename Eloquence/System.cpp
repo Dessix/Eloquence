@@ -3,7 +3,8 @@
 #include <iostream>
 #include <stdio.h>
 
-std::string SystemInterface::exec(char* cmd) {
+std::string SystemInterface::exec( const char* cmd )
+{
 	FILE* pipe = _popen(cmd, "r");
 	if (!pipe) return "ERROR";
 	char buffer[128];

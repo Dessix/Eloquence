@@ -8,5 +8,5 @@ class SystemInterface
 public:
 	SystemInterface(Bot& bot) : bot(bot)
 	{}
-	std::string exec(char* cmd);
+	std::string exec(const char* cmd);
 };
