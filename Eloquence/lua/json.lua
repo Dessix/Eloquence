@@ -591,7 +591,18 @@ local function object_or_array(self, T, etc)
       --
       -- Mixed key types... don't know what to do, so bail
       --
-      self:onEncodeError("a table with both numeric and string keys could be an object or array; aborting", etc)
+      --self:onEncodeError("a table with both numeric and string keys could be an object or array; aborting", etc)
+      
+      local retkeys = {}
+      for key in pairs(T) do
+         if type(key) == 'string' or type(key) == 'number' then
+            table.insert(retkeys, key)
+         else
+            self:onEncodeError("can't encode table with a key of type " .. type(key), etc)
+         end
+      end
+
+      return retkeys
 
    elseif #string_keys == 0  then
       --

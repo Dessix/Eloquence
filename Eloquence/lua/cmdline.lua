@@ -144,7 +144,7 @@ local function dump(seen, path, v, indent)
   if t == 'nil' or t == 'boolean' or t == 'number' then
     stderr:write(colormap[t](tostring(v)))
   elseif t == 'string' then
-    stderr:write("\""..tostring(v).."\"")
+    stderr:write(tostring(v))
   elseif t == 'table' then
     if seen[v] then
       stderr:write(colormap.path(seen[v]))
