@@ -86,3 +86,33 @@ function downloadFile(host, file, port)--Returns filedata as a string, or nil on
 	local filedat = lr:rest()
 	return filedat
 end
+
+function CommandManager(sock)
+	return {
+		sock = sock;
+		lr = LineReader(sock);
+		get = function(self)--Returns json or false.
+			local status, data = self.lr:receive()
+			if not(status)then
+				error("socket has closed.")
+			end
+			return data or nil;
+		end;
+		put = function(self, command)--Sent raw
+			self.sock:write(command)
+		end;
+		putJSON = function(self, command)--In lua table format
+			local cmdj = json.enc(command)
+			return self:put(cmdj)
+		end;
+		blockget = function(self)--waits until data arrives
+			while(true)do
+				local ret = self:get()
+				if(ret)then
+					return ret
+				end
+				sleep(50)
+			end
+		end;
+	}
+end
