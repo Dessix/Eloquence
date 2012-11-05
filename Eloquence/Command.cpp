@@ -61,6 +61,11 @@ std::string readFile(std::string filepath)
 	}
 }
 
+void lSleep(int ms)
+{
+	Sleep(ms);
+}
+
 CommandInterface::CommandInterface( Bot& bot ) : bot(bot)
 {
 	InitializeScripting();
@@ -100,7 +105,8 @@ void CommandInterface::InitializeScripting()
 			.def("write", &NetworkInterface::SockHolder::Write)
 			.def("disconnect", &NetworkInterface::SockHolder::Disconnect),
 		luabind::class_<SystemInterface>("SystemInterface")
-			.def("exec", &SystemInterface::exec)
+			.def("exec", &SystemInterface::exec),
+		luabind::def("sleep", lSleep)
 	];
 	BIND("printraw", Print);
 	BIND("print", PrintLn);
