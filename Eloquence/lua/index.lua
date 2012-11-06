@@ -6,6 +6,7 @@ local _libs = {
 	"net";
 	"ascii85";
 	"base64";
+	"bot";
 }
 
 local function _loadLibs()
@@ -19,3 +20,5 @@ function reloadLibs()
 end
 
 reloadLibs()
+
+pcall(require,"autorun")--To run as a replacement for user-run commands when on a bot configuration
