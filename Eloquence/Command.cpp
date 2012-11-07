@@ -13,11 +13,6 @@ extern "C" {
 #include <string>
 #include <boost/algorithm/string.hpp>
 
-void PrintToLog(const luabind::object& arg)
-{
-	std::cout << luabind::tostring_operator(arg).c_str();
-}
-
 int Print(lua_State* L)
 {
 	int argc = lua_gettop(L);

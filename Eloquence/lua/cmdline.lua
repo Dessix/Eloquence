@@ -192,7 +192,7 @@ local function dump(seen, path, v, indent)
   elseif t == 'function' then
   	stderr:write(tostring(v))
   else
-    error(format('Cannot print type \'%s\'', t))
+    stderr:write("<"..t..">")
   end
 end
 

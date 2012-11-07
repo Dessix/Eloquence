@@ -84,7 +84,7 @@ function repl:detectcontinue(err)
 end
 
 function repl:_compilechunk(chunk)
-  return load(chunk, self:name(), "bt", self:getcontext())
+  return loadstring(chunk, self:name(), "bt", self:getcontext())
 end
 
 function repl:compilechunk(chunk)

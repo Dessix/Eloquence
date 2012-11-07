@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files\luabind">
+      <UniqueIdentifier>{92290131-fc6d-4fdf-8df5-11264743d4d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -25,6 +28,57 @@
     </ClCompile>
     <ClCompile Include="System.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\class.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\class_info.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\class_registry.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\class_rep.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\create_class.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\error.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\exception_handler.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\function.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\inheritance.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\link_compatibility.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\object_rep.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\open.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\pcall.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\scope.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\stack_content_by_name.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\weak_ref.cpp">
+      <Filter>Source Files\luabind</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\luabind\src\wrapper_base.cpp">
+      <Filter>Source Files\luabind</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
