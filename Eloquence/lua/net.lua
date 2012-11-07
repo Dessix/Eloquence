@@ -66,27 +66,6 @@ LineReader = function(sock)
 	}
 end
 
-function downloadFile(host, file, port)--Returns filedata as a string, or nil on failure --Broken to an extreme degree.
-	port = port or 80
-	local sock = net:connect(host, port)
-	sock:write("GET "..file.." HTTP/1.0\n\n")
-	local lr = LineReader(sock)
-
-	local line = lr:await()
-	if(not line:find("200"))then
-		return nil
-	end
-
-	while(true)do
-		line = lr:await()
-		if(line:find("-Length"))then
-			break
-		end
-	end
-	local filedat = lr:rest()
-	return filedat
-end
-
 function CommandManager(sock)
 	return {
 		sock = sock;
@@ -98,8 +77,11 @@ function CommandManager(sock)
 			end
 			return data or nil;
 		end;
-		put = function(self, command)--Sent raw
-			self.sock:write(command)
+		put = function(self, command, lineEnding)
+			return self.sock:write(tostring(command)..tostring(lineEnding or "\r\n"))
+		end;
+		putRaw = function(self, command)
+			return self:put(command, "")--Override lineEnding with "" for raw
 		end;
 		putJSON = function(self, command)--In lua table format
 			local cmdj = json.enc(command)

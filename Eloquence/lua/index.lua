@@ -6,6 +6,7 @@ local _libs = {
 	"net";
 	"ascii85";
 	"base64";
+	"protocol";--Dominix Communication Protocol generators
 	"bot";
 }
 
