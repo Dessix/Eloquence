@@ -9,4 +9,6 @@ public:
 	SystemInterface(Bot& bot) : bot(bot)
 	{}
 	std::string exec(const char* cmd);
+	std::string cwd();
+	bool setcwd(std::string path);
 };
