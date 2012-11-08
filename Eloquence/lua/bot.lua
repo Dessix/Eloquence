@@ -31,6 +31,7 @@ end
 local commandHandlers = {
 	SCRIPT=function(self,args)
 		local success, res = pcall(loadstring,args["CONTENT"])
+		collectgarbage()--Clean up anything left over by the script call
 		if(success)then
 			return res()
 		end
@@ -118,6 +119,7 @@ function commandLoop(cmdMgr)
 			sleep(25)--A little breather for the socket.
 		end
 		sleep(500)--Wait a while for a new command
+		collectgarbage()--Clean up extra data while we have time to use
 	end
 end
 
