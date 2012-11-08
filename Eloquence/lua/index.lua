@@ -1,5 +1,5 @@
 local _libs = {
-	"table";
+	"tableutils";
 	"serial";
 	"json";
 	"conf";
@@ -8,6 +8,7 @@ local _libs = {
 	"base64";
 	"protocol";--Dominix Communication Protocol generators
 	"bot";
+	"controller";
 }
 
 local function _loadLibs()
