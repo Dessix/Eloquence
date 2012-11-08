@@ -33,3 +33,11 @@ function table.tostring( tbl )
   end
   return "{" .. table.concat( result, "," ) .. "}"
 end
+
+function table.copy(tbl)
+	local newtable = {}
+	for k,v in pairs(tbl)do
+		newtable[k] = v
+	end
+	return newtable
+end

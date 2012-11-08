@@ -49,7 +49,11 @@ local commandHandlers = {
 		return genIdentBot()
 	end;
 	SAVEBIN=function(self,args)
-		return pcall(file.write, args["CONTENT"]["name"], base64.dec(args["CONTENT"]["data"]))
+		local content = args["CONTENT"]
+		if(not content)then
+			return
+		end
+		return pcall(file.write, content["FILENAME"], base64.dec(content["DATA"]))
 	end;
 	STATUS=function(self,args)
 		local state = args["CONTENT"]
@@ -91,22 +95,29 @@ function protocolCommand(jsondat)
 	end
 end
 
+function singleCommand(cmdMgr)--Return true if there was a command, false otherwise
+	local command = cmdMgr:get()
+	if(not command)then
+		return false
+	end
+	print("=> "..tostring(command))
+	
+	local res = protocolCommand(command)
+	if(res~=nil)then
+		res = json.enc(res)
+		print("<= "..tostring(res))
+		cmdMgr:put(res)
+	end
+	return true
+end
+
 function commandLoop(cmdMgr)
 	while(true)do
-		cmdMgr:put(json.enc({COMMAND="STATUS"}))--Heartbeat to check if the connection is alive
-		local command = cmdMgr:get()
-		if(not command)then
-			sleep(5000)--Wait 5 seconds for a new command
-		else
-			print("=> "..tostring(command))
-			
-			local res = protocolCommand(command)
-			if(res~=nil)then
-				res = json.enc(res)
-				print("<= "..tostring(res))
-				cmdMgr:put(res)
-			end
+		cmdMgr:put(" ", "")--Heartbeat to cause an error if the connection is dead
+		while(singleCommand(cmdMgr))do
+			sleep(25)--A little breather for the socket.
 		end
+		sleep(500)--Wait a while for a new command
 	end
 end
 

@@ -60,6 +60,10 @@ void lSleep(int ms)
 {
 	Sleep(ms);
 }
+std::string lTrim(std::string str)
+{
+	return boost::algorithm::trim_copy(str);
+}
 
 CommandInterface::CommandInterface( Bot& bot ) : bot(bot)
 {
@@ -88,11 +92,15 @@ void CommandInterface::InitializeScripting()
 		luabind::def("write", writeFile),
 		luabind::def("read", readFile)
 	];
+	luabind::module(lua, "string")
+	[
+		luabind::def("trim", lTrim)
+	];
 	luabind::module(lua)
 		[
 		luabind::class_<CommandInterface>("CommandInterface")
 			.def("getNet", &CommandInterface::getNetworking)
-			.def("getSystem", &CommandInterface::getSystem),
+			.def("getSys", &CommandInterface::getSystem),
 		luabind::class_<NetworkInterface>("NetworkInterface")
 			.def("connect", &NetworkInterface::CreateSocket, luabind::adopt(luabind::result)),
 		luabind::class_<NetworkInterface::SockHolder>("Socket")
@@ -100,19 +108,21 @@ void CommandInterface::InitializeScripting()
 			.def("write", &NetworkInterface::SockHolder::Write)
 			.def("disconnect", &NetworkInterface::SockHolder::Disconnect),
 		luabind::class_<SystemInterface>("SystemInterface")
-			.def("exec", &SystemInterface::exec),
+			.def("exec", &SystemInterface::exec)
+			.def("cd", &SystemInterface::setcwd)
+			.def("cwd", &SystemInterface::cwd),
 		luabind::def("sleep", lSleep)
 	];
 	BIND("printraw", Print);
 	BIND("print", PrintLn);
 	BIND("log", PrintLn);
 	RUN("exit = function() ___EXIT = 1 end");
+	luabind::globals(lua)["cmd"]=this;
+	luabind::globals(lua)["net"]=bot.getNet();
 	RUN("require('cmdline')");
 	RUN("require('index')");
 #undef RUN
 #undef BIND
-	luabind::globals(lua)["cmd"]=this;
-	luabind::globals(lua)["net"]=bot.getNet();
 }
 
 void CommandInterface::CloseScripting()
