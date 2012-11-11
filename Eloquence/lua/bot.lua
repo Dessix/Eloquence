@@ -124,6 +124,7 @@ function commandLoop(cmdMgr)
 end
 
 function connectionLoop(host, port)
+	port = port or 13337
 	while(true)do
 		--Attempt to connect to the master
 		print("#Attempting connection to master...")

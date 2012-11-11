@@ -72,8 +72,7 @@ function CommandManager(sock)
 			return self:put(command, "")--Override lineEnding with "" for raw
 		end;
 		putJSON = function(self, command)--In lua table format
-			local cmdj = json.enc(command)
-			return self:put(cmdj)
+			return self:put(json.enc(command))
 		end;
 		blockget = function(self, timeout, incremental)--waits until data arrives, or up until timeout in incremental intervals
 			if(timeout)then
