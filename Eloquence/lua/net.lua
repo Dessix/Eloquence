@@ -39,18 +39,6 @@ LineReader = function(sock)
 				return true, nil
 			end
 		end,
-		await = function(self)--Wait until a line successfully arrives, or fail if the server disconnected.
-			while(true)do
-				StreamState, Line = self:receive()
-				if(not StreamState)then
-					return Line
-				else
-					if(StreamState and Line)then
-						return Line
-					end
-				end
-			end
-		end,
 		rest = function(self)--Get the rest of the message until an empty string or server closed message arrives.
 			while(true)do
 				StreamState, Data = pcall(self.sock.read, self.sock)
@@ -87,13 +75,25 @@ function CommandManager(sock)
 			local cmdj = json.enc(command)
 			return self:put(cmdj)
 		end;
-		blockget = function(self)--waits until data arrives
-			while(true)do
-				local ret = self:get()
-				if(ret)then
-					return ret
+		blockget = function(self, timeout, incremental)--waits until data arrives, or up until timeout in incremental intervals
+			if(timeout)then
+				incremental = incremental or 50
+				local timeWaited = 0
+				for i = 0, timeout, incremental do
+					local ret = self:get()
+					if(ret)then
+						return ret
+					end
+					sleep(incremental)
 				end
-				sleep(50)
+			else
+				while(true)do
+					local ret = self:get()
+					if(ret)then
+						return ret
+					end
+					sleep(incremental)
+				end
 			end
 		end;
 	}
