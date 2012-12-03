@@ -112,7 +112,7 @@ function control(host, port)
 			if(not data)then
 				return
 			end
-			return self:savebin(destfile, data)
+			return self:SAVEBIN(destfile, data)
 		end;
 		RELAY = function(self, command, target)
 			return {COMMAND="RELAY", CONTENT=command, TARGET=(target or nil)}
